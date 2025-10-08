@@ -12,30 +12,33 @@ export default function Home() {
   const [ownerName, setOwnerName] = useState("");
   const [registrations, setRegistrations] = useState<Registration[]>([]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Check if plate number already exists
-    const exists = registrations.some((r) => r.plateNumber === plateNumber.trim());
+    try {
+      const response = await fetch('/api/registration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plateNumber, ownerName }),
+      });
 
-    if (exists) {
-      alert("Error: This plate number is already registered.");
-      return;
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || 'Failed to register plate.');
+        return;
+      }
+
+      alert(`Plate registered: ${plateNumber} to ${ownerName}`);
+
+      setPlateNumber('');
+      setOwnerName('');
+    } catch (error) {
+      alert('Error connecting to the server.');
+      console.error(error);
     }
-
-    // Add new registration
-    const newRegistration: Registration = {
-      plateNumber: plateNumber.trim(),
-      ownerName: ownerName.trim(),
-    };
-
-    setRegistrations([...registrations, newRegistration]);
-    alert(`Plate registered: ${plateNumber} to ${ownerName}`);
-
-    // Clear fields
-    setPlateNumber("");
-    setOwnerName("");
   };
+
 
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
