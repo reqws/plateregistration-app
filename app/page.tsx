@@ -16,7 +16,7 @@ export default function Home() {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/registration', {
+      const response = await fetch('/api', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ plateNumber, ownerName }),

@@ -1,4 +1,9 @@
 // app/api/registration/route.ts
+
+// before installing mongodb (Remove-Item -Recurse -Force node_modules, package-lock.json)
+// npm install --legacy-peer-deps
+// npm install mongodb
+
 import { NextRequest, NextResponse } from 'next/server';
 import { MongoClient } from 'mongodb';
 
@@ -14,7 +19,7 @@ export async function POST(request: NextRequest) {
 
   try {
     await client.connect();
-    const db = client.db('plateregistration_db_user'); // your DB name
+    const db = client.db('MongoDB_User'); // your DB name
     const collection = db.collection('registrations');
 
     // Check for existing plate number
