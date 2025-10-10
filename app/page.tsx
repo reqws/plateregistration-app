@@ -1,48 +1,43 @@
 "use client";
 
 import { useState } from "react";
-
-interface Registration {
-  plateNumber: string;
-  ownerName: string;
-}
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [plateNumber, setPlateNumber] = useState("");
   const [ownerName, setOwnerName] = useState("");
-  const [registrations, setRegistrations] = useState<Registration[]>([]);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plateNumber, ownerName }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.error || 'Failed to register plate.');
+        alert(data.error || "Failed to register plate.");
         return;
       }
 
       alert(`Plate registered: ${plateNumber} to ${ownerName}`);
-
-      setPlateNumber('');
-      setOwnerName('');
+      setPlateNumber("");
+      setOwnerName("");
     } catch (error) {
-      alert('Error connecting to the server.');
-      console.error(error);
+      alert("Error connecting to the server.");
+      console.error("Submit Error:", error);
     }
   };
 
 
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-center">
+      <main className="flex flex-col gap-8 row-start-2 items-center">
         <h1 className="text-2xl font-bold">Simple Plate Registration</h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-sm">
@@ -83,6 +78,15 @@ export default function Home() {
             Register Plate
           </button>
         </form>
+
+        {/* Go to Login Page */}
+        <button
+          type="button"
+          onClick={() => router.push("/login")}
+          className="bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition-colors w-full max-w-sm"
+        >
+          Admin Login
+        </button>
       </main>
 
       <footer className="row-start-3 text-sm text-gray-500">
