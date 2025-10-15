@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { FaLock } from "react-icons/fa"; // Optional icon
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -11,24 +12,28 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Example authentication logic (replace with real one)
+    // Replace this with real authentication logic
     if (username === "admin" && password === "admin123") {
-      router.push("/admin"); // Redirect after successful login
+      router.push("/admin");
     } else {
       alert("Invalid credentials");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-blue-200 p-4">
       <form
         onSubmit={handleLogin}
-        className="bg-white p-8 rounded shadow-md w-full max-w-sm"
+        className="bg-white rounded-xl shadow-lg w-full max-w-sm p-8 flex flex-col gap-6"
       >
-        <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
+        <div className="text-center">
+          <FaLock className="text-blue-500 text-4xl mx-auto mb-2" />
+          <h1 className="text-3xl font-bold text-blue-700">Admin Login</h1>
+          <p className="text-sm text-gray-500 mt-1">Enter your credentials to continue</p>
+        </div>
 
-        <div className="mb-4">
-          <label htmlFor="username" className="block text-gray-700 font-semibold mb-2">
+        <div>
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
             Username
           </label>
           <input
@@ -36,13 +41,13 @@ export default function LoginPage() {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
             required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
 
-        <div className="mb-6">
-          <label htmlFor="password" className="block text-gray-700 font-semibold mb-2">
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
             Password
           </label>
           <input
@@ -50,17 +55,21 @@ export default function LoginPage() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
             required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+          className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition"
         >
           Login
         </button>
+
+        <div className="text-center text-sm text-gray-400 mt-4">
+          &copy; {new Date().getFullYear()} Plate Registry
+        </div>
       </form>
     </div>
   );

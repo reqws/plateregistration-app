@@ -34,16 +34,18 @@ export default function Home() {
     }
   };
 
-
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-8 row-start-2 items-center">
-        <h1 className="text-2xl font-bold">Simple Plate Registration</h1>
+    <div className="font-sans bg-gradient-to-br from-blue-100 via-white to-blue-200 min-h-screen p-6 flex flex-col items-center justify-center">
+      <main className="bg-white shadow-xl rounded-lg p-8 w-full max-w-md flex flex-col gap-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-extrabold text-blue-700 mb-1">Plate Registry</h1>
+          <p className="text-sm text-gray-500">Register your vehicle plate below</p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-sm">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label htmlFor="plate" className="text-sm font-medium block mb-1">
-              Plate Number:
+            <label htmlFor="plate" className="text-sm font-medium text-gray-700 block mb-1">
+              Plate Number
             </label>
             <input
               id="plate"
@@ -52,13 +54,13 @@ export default function Home() {
               onChange={(e) => setPlateNumber(e.target.value)}
               required
               placeholder="e.g. ABC1234"
-              className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
             />
           </div>
 
           <div>
-            <label htmlFor="owner" className="text-sm font-medium block mb-1">
-              Owner Name:
+            <label htmlFor="owner" className="text-sm font-medium text-gray-700 block mb-1">
+              Owner Name
             </label>
             <input
               id="owner"
@@ -67,29 +69,30 @@ export default function Home() {
               onChange={(e) => setOwnerName(e.target.value)}
               required
               placeholder="e.g. John Doe"
-              className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
             />
           </div>
 
           <button
             type="submit"
-            className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
+            className="bg-blue-600 text-white font-medium py-2 rounded-md hover:bg-blue-700 transition"
           >
             Register Plate
           </button>
         </form>
 
-        {/* Go to Login Page */}
-        <button
-          type="button"
-          onClick={() => router.push("/login")}
-          className="bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition-colors w-full max-w-sm"
-        >
-          Admin Login
-        </button>
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={() => router.push("/login")}
+            className="text-sm text-blue-600 hover:underline mt-4"
+          >
+            Admin Login
+          </button>
+        </div>
       </main>
 
-      <footer className="row-start-3 text-sm text-gray-500">
+      <footer className="mt-8 text-sm text-gray-500">
         &copy; {new Date().getFullYear()} Plate Registry
       </footer>
     </div>
