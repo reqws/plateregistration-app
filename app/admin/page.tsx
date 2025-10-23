@@ -18,6 +18,13 @@ export default function AdminPage() {
     fetchRegistrations();
   }, []);
 
+  // Live switch back to "Add" if both fields are empty
+  useEffect(() => {
+    if (!form.plateNumber.trim() && !form.ownerName.trim()) {
+      setEditingId(null);
+    }
+  }, [form.plateNumber, form.ownerName]);
+
   async function fetchRegistrations() {
     const res = await fetch('/api/registration');
     const data = await res.json();
@@ -93,13 +100,32 @@ export default function AdminPage() {
             className="border px-4 py-2 rounded w-full sm:w-1/3"
           />
           {editingId ? (
-            <button onClick={handleUpdate} className="bg-green-600 text-white px-4 py-2 rounded">
-              Update
-            </button>
+            <>
+              <button onClick={handleUpdate} className="bg-green-600 text-white px-4 py-2 rounded">
+                Update
+              </button>
+              <button
+                onClick={() => {
+                  setForm({ plateNumber: '', ownerName: '' });
+                  setEditingId(null);
+                }}
+                className="bg-gray-600 text-white px-4 py-2 rounded"
+              >
+                Clear
+              </button>
+            </>
           ) : (
-            <button onClick={handleAdd} className="bg-blue-600 text-white px-4 py-2 rounded">
-              Add
-            </button>
+            <>
+              <button onClick={handleAdd} className="bg-blue-600 text-white px-4 py-2 rounded">
+                Add
+              </button>
+              <button
+                onClick={() => setForm({ plateNumber: '', ownerName: '' })}
+                className="bg-gray-600 text-white px-4 py-2 rounded"
+              >
+                Clear
+              </button>
+            </>
           )}
         </div>
 
@@ -108,33 +134,34 @@ export default function AdminPage() {
           {registrations.length === 0 ? (
             <p className="text-gray-500">No plates registered yet.</p>
           ) : (
-            <table className="min-w-full border border-gray-300 text-left text-sm">
-              <thead className="bg-blue-100 text-blue-700">
+            <table className="min-w-full border border-gray-300 text-left text-sm rounded-md shadow-sm overflow-hidden">
+              <thead className="bg-blue-100 text-blue-700 sticky top-0">
                 <tr>
-                  <th className="p-3 border-b">Plate Number</th>
-                  <th className="p-3 border-b">Owner Name</th>
-                  <th className="p-3 border-b">Created At</th>
-                  <th className="p-3 border-b">Actions</th>
+                  <th className="p-3 border-b border-gray-300">Plate Number</th>
+                  <th className="p-3 border-b border-gray-300">Owner Name</th>
+                  <th className="p-3 border-b border-gray-300">Created At</th>
+                  <th className="p-3 border-b border-gray-300">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {registrations.map((plate) => (
-                  <tr key={plate.id} className="hover:bg-blue-50">
-                    <td className="p-3 border-b">{plate.plateNumber}</td>
-                    <td className="p-3 border-b">{plate.ownerName}</td>
-                    <td className="p-3 border-b">
-                      {new Date(plate.createdAt).toLocaleString()}
-                    </td>
-                    <td className="p-3 border-b space-x-2">
+                {registrations.map((plate, index) => (
+                  <tr
+                    key={plate.id}
+                    className={`hover:bg-blue-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                  >
+                    <td className="p-3 border-b border-gray-300">{plate.plateNumber}</td>
+                    <td className="p-3 border-b border-gray-300">{plate.ownerName}</td>
+                    <td className="p-3 border-b border-gray-300">{new Date(plate.createdAt).toLocaleString()}</td>
+                    <td className="p-3 border-b border-gray-300 space-x-3">
                       <button
                         onClick={() => handleEdit(plate)}
-                        className="text-blue-600 hover:underline"
+                        className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(plate.id)}
-                        className="text-red-600 hover:underline"
+                        className="text-red-600 hover:underline focus:outline-none focus:ring-2 focus:ring-red-400 rounded"
                       >
                         Delete
                       </button>
