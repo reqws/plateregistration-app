@@ -1,96 +1,96 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function Home() {
-  const [plateNumber, setPlateNumber] = useState("");
-  const [ownerName, setOwnerName] = useState("");
+type Plate = {
+  id: string;
+  plateNumber: string;
+  ownerName: string;
+  createdAt: string;
+};
+
+export default function PlateTable() {
+  const [registrations, setRegistrations] = useState<Plate[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    fetchRegistrations();
+  }, []);
 
-    try {
-      const response = await fetch("/api", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plateNumber, ownerName }),
-      });
+  async function fetchRegistrations() {
+    const res = await fetch('/api/registration');
+    const data = await res.json();
+    setRegistrations(data);
+  }
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.error || "Failed to register plate.");
-        return;
-      }
-
-      alert(`Plate registered: ${plateNumber} to ${ownerName}`);
-      setPlateNumber("");
-      setOwnerName("");
-    } catch (error) {
-      alert("Error connecting to the server.");
-      console.error("Submit Error:", error);
-    }
-  };
+  // Filtered plates based on search input
+  const filteredPlates = registrations.filter(
+    (plate) =>
+      plate.plateNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      plate.ownerName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div className="font-sans bg-gradient-to-br from-blue-100 via-white to-blue-200 min-h-screen p-6 flex flex-col items-center justify-center">
-      <main className="bg-white shadow-xl rounded-lg p-8 w-full max-w-md flex flex-col gap-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-extrabold text-blue-700 mb-1">Plate Registry</h1>
-          <p className="text-sm text-gray-500">Register your vehicle plate below</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 flex flex-col items-center justify-center p-6">
+      <div className="bg-white rounded-xl shadow-lg p-10 max-w-4xl w-full text-center">
+        <h1 className="text-3xl font-bold text-blue-700 mb-2">Plate Registry</h1>
+        <p className="text-gray-600 text-sm mb-6">All registered plates below.</p>
+
+        {/* Search Bar */}
+        <div className="mb-6 flex justify-center">
+          <input
+            type="text"
+            placeholder="Search by plate number or owner name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border border-gray-300 rounded-md px-4 py-2 w-full max-w-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div>
-            <label htmlFor="plate" className="text-sm font-medium text-gray-700 block mb-1">
-              Plate Number
-            </label>
-            <input
-              id="plate"
-              type="text"
-              value={plateNumber}
-              onChange={(e) => setPlateNumber(e.target.value)}
-              required
-              placeholder="e.g. ABC1234"
-              className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-            />
-          </div>
+        {/* Table */}
+        <div className="overflow-x-auto">
+          {filteredPlates.length === 0 ? (
+            <p className="text-gray-500">No matching plates found.</p>
+          ) : (
+            <table className="min-w-full border border-gray-300 text-left text-sm rounded-md shadow-sm overflow-hidden">
+              <thead className="bg-blue-100 text-blue-700">
+                <tr>
+                  <th className="p-3 border-b border-gray-300">Plate Number</th>
+                  <th className="p-3 border-b border-gray-300">Owner Name</th>
+                  <th className="p-3 border-b border-gray-300">Created At</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredPlates.map((plate, index) => (
+                  <tr
+                    key={plate.id}
+                    className={`hover:bg-blue-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                  >
+                    <td className="p-3 border-b border-gray-300">{plate.plateNumber}</td>
+                    <td className="p-3 border-b border-gray-300">{plate.ownerName}</td>
+                    <td className="p-3 border-b border-gray-300">
+                      {new Date(plate.createdAt).toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
 
-          <div>
-            <label htmlFor="owner" className="text-sm font-medium text-gray-700 block mb-1">
-              Owner Name
-            </label>
-            <input
-              id="owner"
-              type="text"
-              value={ownerName}
-              onChange={(e) => setOwnerName(e.target.value)}
-              required
-              placeholder="e.g. John Doe"
-              className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="bg-blue-600 text-white font-medium py-2 rounded-md hover:bg-blue-700 transition"
-          >
-            Register Plate
-          </button>
-        </form>
-
-        <div className="text-center">
+        {/* Admin Login button */}
+        <div className="mt-6">
           <button
             type="button"
-            onClick={() => router.push("/login")}
-            className="text-sm text-blue-600 hover:underline mt-4"
+            onClick={() => router.push('/login')}
+            className="bg-blue-600 text-white font-semibold py-2 px-5 rounded-md hover:bg-blue-700 transition"
           >
             Admin Login
           </button>
         </div>
-      </main>
+      </div>
 
       <footer className="mt-8 text-sm text-gray-500">
         &copy; {new Date().getFullYear()} Plate Registry
