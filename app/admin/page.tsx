@@ -13,12 +13,13 @@ export default function AdminPage() {
   const [registrations, setRegistrations] = useState<Plate[]>([]);
   const [form, setForm] = useState({ plateNumber: '', ownerName: '' });
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchRegistrations();
   }, []);
 
-  // Live switch back to "Add" if both fields are empty
+  // Automatically reset editing state if inputs are cleared
   useEffect(() => {
     if (!form.plateNumber.trim() && !form.ownerName.trim()) {
       setEditingId(null);
@@ -77,13 +78,31 @@ export default function AdminPage() {
     fetchRegistrations();
   };
 
+  // 🔍 Filter plates based on search input
+  const filteredPlates = registrations.filter(
+    (plate) =>
+      plate.plateNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      plate.ownerName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 flex items-center justify-center p-6">
       <div className="bg-white rounded-xl shadow-lg p-10 max-w-4xl w-full text-center">
         <h1 className="text-3xl font-bold text-blue-700 mb-2">Welcome, Admin</h1>
         <p className="text-gray-600 text-sm mb-6">Manage plate registrations below.</p>
 
-        {/* Form */}
+        {/* 🔍 Search Bar */}
+        <div className="mb-6 flex justify-center">
+          <input
+            type="text"
+            placeholder="Search by plate number or owner name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border border-gray-300 rounded-md px-4 py-2 w-full max-w-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+          />
+        </div>
+
+        {/* Form Section */}
         <div className="flex flex-col sm:flex-row gap-2 justify-center mb-6">
           <input
             type="text"
@@ -129,13 +148,13 @@ export default function AdminPage() {
           )}
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          {registrations.length === 0 ? (
-            <p className="text-gray-500">No plates registered yet.</p>
+        {/* Scrollable Table */}
+        <div className="overflow-x-auto max-h-[400px] overflow-y-auto rounded-md border border-gray-300 shadow-sm">
+          {filteredPlates.length === 0 ? (
+            <p className="text-gray-500 p-4">No matching plates found.</p>
           ) : (
-            <table className="min-w-full border border-gray-300 text-left text-sm rounded-md shadow-sm overflow-hidden">
-              <thead className="bg-blue-100 text-blue-700 sticky top-0">
+            <table className="min-w-full text-left text-sm">
+              <thead className="bg-blue-100 text-blue-700 sticky top-0 z-10">
                 <tr>
                   <th className="p-3 border-b border-gray-300">Plate Number</th>
                   <th className="p-3 border-b border-gray-300">Owner Name</th>
@@ -144,14 +163,17 @@ export default function AdminPage() {
                 </tr>
               </thead>
               <tbody>
-                {registrations.map((plate, index) => (
+                {filteredPlates.map((plate, index) => (
                   <tr
                     key={plate.id}
-                    className={`hover:bg-blue-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                    className={`hover:bg-blue-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      }`}
                   >
                     <td className="p-3 border-b border-gray-300">{plate.plateNumber}</td>
                     <td className="p-3 border-b border-gray-300">{plate.ownerName}</td>
-                    <td className="p-3 border-b border-gray-300">{new Date(plate.createdAt).toLocaleString()}</td>
+                    <td className="p-3 border-b border-gray-300">
+                      {new Date(plate.createdAt).toLocaleString()}
+                    </td>
                     <td className="p-3 border-b border-gray-300 space-x-3">
                       <button
                         onClick={() => handleEdit(plate)}
