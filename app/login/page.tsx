@@ -97,9 +97,8 @@ export default function PlateTable() {
                 {currentPlates.map((plate, index) => (
                   <tr
                     key={plate.id}
-                    className={`hover:bg-blue-50 ${
-                      index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                    }`}
+                    className={`hover:bg-blue-50 ${index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                      }`}
                   >
                     <td className="p-3 border-b border-gray-300">{plate.plateNumber}</td>
                     <td className="p-3 border-b border-gray-300">{plate.ownerName}</td>
@@ -119,11 +118,10 @@ export default function PlateTable() {
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 1}
-              className={`px-4 py-2 rounded-md font-medium ${
-                currentPage === 1
-                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700 transition"
-              }`}
+              className={`px-4 py-2 rounded-md font-medium ${currentPage === 1
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700 transition"
+                }`}
             >
               Previous
             </button>
@@ -135,11 +133,10 @@ export default function PlateTable() {
             <button
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              className={`px-4 py-2 rounded-md font-medium ${
-                currentPage === totalPages
-                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700 transition"
-              }`}
+              className={`px-4 py-2 rounded-md font-medium ${currentPage === totalPages
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700 transition"
+                }`}
             >
               Next
             </button>

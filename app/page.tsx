@@ -106,8 +106,8 @@ export default function PlateTable() {
               onClick={handlePrevPage}
               disabled={currentPage === 1}
               className={`px-4 py-2 rounded-md font-medium ${currentPage === 1
-                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-600 text-white hover:bg-blue-700 transition'
+                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                : 'bg-blue-600 text-white hover:bg-blue-700 transition'
                 }`}
             >
               Previous
@@ -121,8 +121,8 @@ export default function PlateTable() {
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
               className={`px-4 py-2 rounded-md font-medium ${currentPage === totalPages
-                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-600 text-white hover:bg-blue-700 transition'
+                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                : 'bg-blue-600 text-white hover:bg-blue-700 transition'
                 }`}
             >
               Next

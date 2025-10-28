@@ -86,7 +86,7 @@ export default function AdminPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 flex items-center justify-center p-6">
+    <div className="h-screen w-screen overflow-hidden bg-gradient-to-br from-blue-100 via-white to-blue-200 flex items-center justify-center p-6">
       <div className="bg-white rounded-xl shadow-lg p-10 max-w-4xl w-full text-center">
         <h1 className="text-3xl font-bold text-blue-700 mb-2">Welcome, Admin</h1>
         <p className="text-gray-600 text-sm mb-6">Manage plate registrations below.</p>
@@ -166,8 +166,7 @@ export default function AdminPage() {
                 {filteredPlates.map((plate, index) => (
                   <tr
                     key={plate.id}
-                    className={`hover:bg-blue-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                      }`}
+                    className={`hover:bg-blue-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
                   >
                     <td className="p-3 border-b border-gray-300">{plate.plateNumber}</td>
                     <td className="p-3 border-b border-gray-300">{plate.ownerName}</td>
