@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+// Type for a plate record returned from the API
 type Plate = {
   id: string;
   plateNumber: string;
@@ -10,28 +11,38 @@ type Plate = {
 };
 
 export default function AdminPage() {
+  // List of all registrations
   const [registrations, setRegistrations] = useState<Plate[]>([]);
+
+  // Form state for creating or editing a plate
   const [form, setForm] = useState({ plateNumber: '', ownerName: '' });
+
+  // Tracks which plate ID is currently being edited
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  // Search query to filter plates
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Fetch initial registration data on page load
   useEffect(() => {
     fetchRegistrations();
   }, []);
 
-  // Automatically reset editing state if inputs are cleared
+  // Reset editing mode if both inputs are cleared
   useEffect(() => {
     if (!form.plateNumber.trim() && !form.ownerName.trim()) {
       setEditingId(null);
     }
   }, [form.plateNumber, form.ownerName]);
 
+  // Fetch all plate registrations from backend
   async function fetchRegistrations() {
     const res = await fetch('/api/registration');
     const data = await res.json();
     setRegistrations(data);
   }
 
+  // Add a new plate registration
   const handleAdd = async () => {
     if (!form.plateNumber || !form.ownerName) return;
 
@@ -43,27 +54,31 @@ export default function AdminPage() {
 
     if (res.ok) {
       setForm({ plateNumber: '', ownerName: '' });
-      fetchRegistrations();
+      fetchRegistrations(); // Refresh list
     } else {
       const err = await res.json();
       alert(err.error || 'Failed to add plate');
     }
   };
 
+  // Delete a plate by ID
   const handleDelete = async (id: string) => {
     await fetch('/api/registration', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
     });
+
     fetchRegistrations();
   };
 
+  // Fill form for editing a selected plate
   const handleEdit = (plate: Plate) => {
     setEditingId(plate.id);
     setForm({ plateNumber: plate.plateNumber, ownerName: plate.ownerName });
   };
 
+  // Update an existing plate
   const handleUpdate = async () => {
     if (!editingId) return;
 
@@ -78,7 +93,7 @@ export default function AdminPage() {
     fetchRegistrations();
   };
 
-  // 🔍 Filter plates based on search input
+  // Filter plates based on search input (plate number or owner name)
   const filteredPlates = registrations.filter(
     (plate) =>
       plate.plateNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -91,7 +106,7 @@ export default function AdminPage() {
         <h1 className="text-3xl font-bold text-blue-700 mb-2">Welcome, Admin</h1>
         <p className="text-gray-600 text-sm mb-6">Manage plate registrations below.</p>
 
-        {/* 🔍 Search Bar */}
+        {/* Search bar */}
         <div className="mb-6 flex justify-center">
           <input
             type="text"
@@ -102,7 +117,7 @@ export default function AdminPage() {
           />
         </div>
 
-        {/* Form Section */}
+        {/* Input form for adding or editing plates */}
         <div className="flex flex-col sm:flex-row gap-2 justify-center mb-6">
           <input
             type="text"
@@ -111,6 +126,7 @@ export default function AdminPage() {
             onChange={(e) => setForm({ ...form, plateNumber: e.target.value })}
             className="border px-4 py-2 rounded w-full sm:w-1/3"
           />
+
           <input
             type="text"
             placeholder="Owner Name"
@@ -118,6 +134,8 @@ export default function AdminPage() {
             onChange={(e) => setForm({ ...form, ownerName: e.target.value })}
             className="border px-4 py-2 rounded w-full sm:w-1/3"
           />
+
+          {/* Show update buttons when editing, otherwise show add buttons */}
           {editingId ? (
             <>
               <button onClick={handleUpdate} className="bg-green-600 text-white px-4 py-2 rounded">
@@ -148,7 +166,7 @@ export default function AdminPage() {
           )}
         </div>
 
-        {/* Scrollable Table */}
+        {/* Scrollable table of plate registrations */}
         <div className="overflow-x-auto max-h-[400px] overflow-y-auto rounded-md border border-gray-300 shadow-sm">
           {filteredPlates.length === 0 ? (
             <p className="text-gray-500 p-4">No matching plates found.</p>
@@ -162,6 +180,7 @@ export default function AdminPage() {
                   <th className="p-3 border-b border-gray-300">Actions</th>
                 </tr>
               </thead>
+
               <tbody>
                 {filteredPlates.map((plate, index) => (
                   <tr
@@ -170,9 +189,13 @@ export default function AdminPage() {
                   >
                     <td className="p-3 border-b border-gray-300">{plate.plateNumber}</td>
                     <td className="p-3 border-b border-gray-300">{plate.ownerName}</td>
+
+                    {/* Format date for readable display */}
                     <td className="p-3 border-b border-gray-300">
                       {new Date(plate.createdAt).toLocaleString()}
                     </td>
+
+                    {/* Edit and delete actions */}
                     <td className="p-3 border-b border-gray-300 space-x-3">
                       <button
                         onClick={() => handleEdit(plate)}
@@ -180,6 +203,7 @@ export default function AdminPage() {
                       >
                         Edit
                       </button>
+
                       <button
                         onClick={() => handleDelete(plate.id)}
                         className="text-red-600 hover:underline focus:outline-none focus:ring-2 focus:ring-red-400 rounded"
